@@ -67,6 +67,17 @@ wilschwein_BE_mean$mean_timelag/60
 
 
 ##Task2
+wildschwein_BE<-wildschwein_BE%>%
+  group_by(TierName)%>%
+  mutate(E2=lead(E,n=1))%>%
+  mutate(N2=lead(N,n=1))%>%
+  mutate(steplength=sqrt((E-E2)^2+(N-N2)^2))%>%
+  mutate(speed=steplength/timelag)
+
+summary(wildschwein_BE)
+
+# The unit of speed is in metre per second, since the timlag was set to seconds and the coordinate system EPSG:2056 is in metres. 
+
 
 
 
