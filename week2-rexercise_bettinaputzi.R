@@ -7,6 +7,9 @@ library(sf)           # to handle spatial vector data
 library(terra)        # To handle raster data
 library(lubridate)    # To handle dates and times
 
+#install.packages("zoo")
+library(zoo)
+
 ## Import the downloaded csv ##################################################
 
 wildschwein_BE <- read_delim("wildschwein_BE_2056.csv",",") # adjust path
@@ -166,16 +169,33 @@ p_speed
 # the animal seems to walk less in the same time interval which reduces  speed obviously.
 
 
+## Task 4
+
+example <- rnorm(10)
+example
+rollmean(example,k = 3,fill = NA,align = "left")
+rollmean(example,k = 4,fill = NA,align = "left")
+
+caro_1<-caro_1%>%
+  mutate(speed3k=rollmean(caro_1$speed,k = 3,fill = NA,align = "left"))%>%
+  mutate (speed4k=rollmean(caro_1$speed,k = 4,fill = NA,align = "left"))%>%
+  mutate (speed10k=rollmean(caro_1$speed,k = 10,fill = NA,align = "left"))%>%
+  mutate (speed20k=rollmean(caro_1$speed,k = 20,fill = NA,align = "left"))
+caro_1
+  
 
 
 
+p_speed_rolled<-ggplot(caro_1, aes(x=DatetimeUTC, y=speed3k, color="3k"))+
+  geom_line()+
+  geom_line(aes(y=speed4k, color="4k"))+
+  geom_line(aes(y=speed10k, color="10k"))+
+  geom_line(aes(y=speed20k, color="20k"))+
+  labs(color="Trajectory")
 
+p_speed_rolled
 
-
-
-
-
-
+## interpretation: the larger the window, the more is the speed being flattened through the other values
 
 
 
